@@ -429,22 +429,70 @@ input[type=range] { width: 60px; accent-color: white; }
 .cat-tab.active .cat-name { color: var(--blue); }
 
 /* ── 圖卡格線 ── */
+/* 圖卡分頁容器：橫向捲動 */
 .symbol-grid {
-  padding: var(--pad);
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(var(--card-min), 1fr));
-  gap: var(--gap);
-  align-content: start;
   flex: 1;
-  min-height: 0;           /* 必要：讓 flex 子項目可收縮並捲動 */
-  overflow-y: auto;
-  overflow-x: hidden;
+  min-height: 0;
+  display: flex;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
-  overscroll-behavior-y: contain;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+}
+.symbol-grid::-webkit-scrollbar { display: none; }
+
+/* 每一頁：固定寬度 = 視窗寬，3×3 格 */
+.symbol-page {
+  flex-shrink: 0;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: var(--gap);
+  padding: var(--pad);
+  scroll-snap-align: start;
+  align-content: start;
 }
 
-/* 桌機：更大的卡片 */
+/* 分頁指示點 */
+.page-dots {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 0 3px;
+  background: var(--surface);
+  flex-shrink: 0;
+}
+.page-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--border);
+  transition: background 0.2s, transform 0.2s;
+}
+.page-dot.active {
+  background: var(--blue);
+  transform: scale(1.3);
+}
+
+/* 桌機：回到 auto-fill 格線，不分頁 */
 @media (min-width: 960px) {
+  .symbol-grid {
+    display: grid;
+    overflow-x: hidden;
+    overflow-y: auto;
+    flex-wrap: unset;
+    scroll-snap-type: unset;
+    grid-template-columns: repeat(auto-fill, minmax(var(--card-min), 1fr));
+    gap: var(--gap);
+    padding: 16px;
+    align-content: start;
+  }
+  .symbol-page { display: contents; } /* 讓頁面子元素直接進入 grid */
+  .page-dots   { display: none; }
   :root { --card-min: clamp(110px, 12vw, 160px); --visual-size: clamp(60px, 9vw, 88px); --emoji-size: clamp(38px, 6vw, 54px); }
 }
 /* 大螢幕 */
@@ -1275,6 +1323,9 @@ body.unlocked .ctrl-btn-full.locked-ui { display: flex !important; }
 <!-- 圖卡格線 -->
 <div class="symbol-grid" id="symbolGrid" role="main" aria-label="溝通圖卡"></div>
 
+<!-- 分頁指示點 -->
+<div class="page-dots" id="pageDots"></div>
+
 <!-- 快速句子 -->
 <div class="quick-area" role="region" aria-label="快速句子">
   <div class="q-label">⚡ 快速句子</div>
@@ -1632,25 +1683,86 @@ function cardVisualHTML(s) {
   return `<div class="symbol-visual"><span class="sym-emoji">${s.emoji || '🌟'}</span></div>`;
 }
 
+const PAGE_SIZE = 9;
+
 function renderSymbols() {
+  const grid = document.getElementById('symbolGrid');
+  const dotsEl = document.getElementById('pageDots');
   const list = symbols[currentCat] || [];
-  let html = list.map((s, i) => `
-    <div class="symbol-card"
-         data-color="${s.color || 'blue'}"
-         onclick="${editMode ? `openEditSymbol(${i})` : `onSymbolClick(this,${i})`}"
-         role="${editMode ? 'button' : 'button'}"
-         aria-label="${s.label}">
-      ${editMode ? `<div class="del-badge" onclick="event.stopPropagation();deleteSymbol(${i})" aria-label="刪除 ${s.label}">✕</div>` : ''}
-      ${cardVisualHTML(s)}
-      <div class="symbol-label">${s.label}</div>
-      ${editMode ? '<div class="edit-badge">編輯</div>' : ''}
-    </div>`).join('');
-  if (editMode)
-    html += `<div class="add-card" onclick="openAddSymbol()" role="button" aria-label="新增圖卡">
-               <div class="add-icon">＋</div>
-               <div class="add-label">新增圖卡</div>
-             </div>`;
-  document.getElementById('symbolGrid').innerHTML = html;
+  const isDesktop = window.innerWidth >= 960;
+
+  if (isDesktop) {
+    // 桌機：原本的 auto-fill 格線，不分頁
+    let html = list.map((s, i) => cardHTML(s, i)).join('');
+    if (editMode) html += addCardHTML();
+    grid.innerHTML = html;
+    if (dotsEl) dotsEl.innerHTML = '';
+    return;
+  }
+
+  // 手機：分頁，每頁 9 張
+  const allItems = [...list];
+  // 編輯模式：把「新增圖卡」加在最後
+  const hasAdd = editMode;
+  const totalItems = allItems.length + (hasAdd ? 1 : 0);
+  const totalPages = Math.max(1, Math.ceil(totalItems / PAGE_SIZE));
+
+  let pagesHTML = '';
+  for (let p = 0; p < totalPages; p++) {
+    const start = p * PAGE_SIZE;
+    const end   = Math.min(start + PAGE_SIZE, allItems.length);
+    let pageItems = allItems.slice(start, end).map((s, idx) => cardHTML(s, start + idx)).join('');
+    // 最後一頁加「新增」按鈕
+    if (hasAdd && p === totalPages - 1) pageItems += addCardHTML();
+    pagesHTML += `<div class="symbol-page">${pageItems}</div>`;
+  }
+  grid.innerHTML = pagesHTML;
+
+  // 指示點
+  if (dotsEl) {
+    dotsEl.innerHTML = totalPages > 1
+      ? Array.from({ length: totalPages }, (_, i) =>
+          `<div class="page-dot${i === 0 ? ' active' : ''}" data-page="${i}"></div>`).join('')
+      : '';
+  }
+
+  // 捲動時更新指示點
+  grid.onscroll = null;
+  if (totalPages > 1) {
+    grid.addEventListener('scroll', updateDots, { passive: true });
+  }
+}
+
+function updateDots() {
+  const grid = document.getElementById('symbolGrid');
+  const dotsEl = document.getElementById('pageDots');
+  if (!dotsEl) return;
+  const pageW = grid.clientWidth;
+  if (!pageW) return;
+  const current = Math.round(grid.scrollLeft / pageW);
+  dotsEl.querySelectorAll('.page-dot').forEach((d, i) => {
+    d.classList.toggle('active', i === current);
+  });
+}
+
+function cardHTML(s, i) {
+  return `<div class="symbol-card"
+       data-color="${s.color || 'blue'}"
+       onclick="${editMode ? `openEditSymbol(${i})` : `onSymbolClick(this,${i})`}"
+       role="button"
+       aria-label="${s.label}">
+    ${editMode ? `<div class="del-badge" onclick="event.stopPropagation();deleteSymbol(${i})" aria-label="刪除 ${s.label}">✕</div>` : ''}
+    ${cardVisualHTML(s)}
+    <div class="symbol-label">${s.label}</div>
+    ${editMode ? '<div class="edit-badge">編輯</div>' : ''}
+  </div>`;
+}
+
+function addCardHTML() {
+  return `<div class="add-card" onclick="openAddSymbol()" role="button" aria-label="新增圖卡">
+    <div class="add-icon">＋</div>
+    <div class="add-label">新增圖卡</div>
+  </div>`;
 }
 
 function renderQuickPhrases() {

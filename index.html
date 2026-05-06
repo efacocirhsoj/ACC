@@ -36,13 +36,13 @@
   --shadow:  0 2px 12px rgba(0,0,0,0.08);
 
   /* 自適應間距 */
-  --gap:     clamp(6px, 1.5vw, 12px);
-  --pad:     clamp(8px, 2vw, 16px);
-  --card-min: 7rem;
+  --gap:      8px;
+  --pad:      10px;
+  --card-min: 90px;
 
-  /* 圖卡視覺大小（rem → 跟著 html font-size 縮放） */
-  --visual-size: 4rem;
-  --emoji-size:  2.5rem;
+  /* 圖卡視覺大小 */
+  --visual-size: 54px;
+  --emoji-size:  36px;
   --label-size:  0.8125rem;
 }
 
@@ -124,10 +124,8 @@ body {
     flex: 1;
     display: flex;
     flex-direction: column;
-    overflow-y: auto;
-    overflow-x: hidden;
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior-y: contain;
+    min-height: 0;          /* 讓 flex 子項目可以縮小 */
+    overflow: hidden;       /* 本身不捲動，交給 symbol-grid */
   }
 }
 
@@ -438,11 +436,11 @@ input[type=range] { width: 60px; accent-color: white; }
   gap: var(--gap);
   align-content: start;
   flex: 1;
-  /* 手機：自身可捲動（圖卡多時不會被壓縮） */
+  min-height: 0;           /* 必要：讓 flex 子項目可收縮並捲動 */
   overflow-y: auto;
+  overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior-y: contain;
-  min-height: 0;
 }
 
 /* 桌機：更大的卡片 */
@@ -2677,11 +2675,20 @@ function applySettings() {
   document.body.style.background = settings.bgColor;
   document.documentElement.style.setProperty('--bg', settings.bgColor);
 
-  // 全站縮放：設定 html font-size 基準，所有 rem 單位同步縮放
+  // 縮放比例
   const scale = settings.fontSize === 'xlarge' ? 1.5
               : settings.fontSize === 'large'  ? 1.25
               : 1;
+
+  // html 基準（影響所有 rem 單位）
   document.documentElement.style.fontSize = (16 * scale) + 'px';
+
+  // 圖卡尺寸（px → 跟 scale 同步）
+  document.documentElement.style.setProperty('--card-min',    Math.round(90  * scale) + 'px');
+  document.documentElement.style.setProperty('--visual-size', Math.round(54  * scale) + 'px');
+  document.documentElement.style.setProperty('--emoji-size',  Math.round(36  * scale) + 'px');
+  document.documentElement.style.setProperty('--gap',         Math.round(8   * scale) + 'px');
+  document.documentElement.style.setProperty('--pad',         Math.round(10  * scale) + 'px');
 }
 
 function applyAndSaveSettings() {

@@ -35,12 +35,12 @@
   /* 自適應間距 */
   --gap:     clamp(6px, 1.5vw, 12px);
   --pad:     clamp(8px, 2vw, 16px);
-  --card-min: clamp(90px, 18vw, 130px);
+  --card-min: 7rem;
 
-  /* 圖卡視覺大小 */
-  --visual-size: clamp(52px, 10vw, 72px);
-  --emoji-size:  clamp(32px, 7vw, 46px);
-  --label-size:  clamp(11px, 2vw, 14px);
+  /* 圖卡視覺大小（rem → 跟著 html font-size 縮放） */
+  --visual-size: 4rem;
+  --emoji-size:  2.5rem;
+  --label-size:  0.8125rem;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -52,7 +52,7 @@ body {
   background: var(--bg);
   color: var(--text);
   min-height: 100%;
-  font-size: clamp(13px, 1.8vw, 16px);
+  font-size: 1rem;
   -webkit-tap-highlight-color: transparent;
   overflow-x: hidden;
 }
@@ -109,8 +109,8 @@ body {
   gap: 4px;
 }
 @media (min-width: 960px) { .sidebar-brand { display: flex; } }
-.sidebar-brand-title { color: white; font-size: 18px; font-weight: 900; letter-spacing: 0.5px; }
-.sidebar-brand-sub   { color: rgba(255,255,255,0.7); font-size: 11px; font-weight: 600; }
+.sidebar-brand-title { color: white; font-size: 1.125rem; font-weight: 900; letter-spacing: 0.5px; }
+.sidebar-brand-sub   { color: rgba(255,255,255,0.7); font-size: 0.6875rem; font-weight: 600; }
 
 /* 側邊欄控制區 */
 .sidebar-controls {
@@ -123,13 +123,13 @@ body {
 @media (max-width: 959px) { .sidebar-controls { display: none; } }
 
 .ctrl-group { display: flex; flex-direction: column; gap: 4px; }
-.ctrl-label { font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.6px; }
+.ctrl-label { font-size: 0.625rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.6px; }
 
 .ctrl-btn-full {
   width: 100%;
   padding: 9px 12px;
   border-radius: 10px;
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 700;
   cursor: pointer;
   font-family: inherit;
@@ -148,7 +148,7 @@ body {
 .ctrl-btn-full.cloud:hover { background: var(--blue-dk); }
 
 .vol-row { display: flex; align-items: center; gap: 8px; }
-.vol-row span { font-size: 16px; }
+.vol-row span { font-size: 1.0rem; }
 .vol-row input { flex: 1; accent-color: var(--blue); }
 
 /* 側邊欄分類列表（桌機改為垂直列表） */
@@ -162,7 +162,7 @@ body {
   padding: 10px 12px;
   border-radius: 10px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 700;
   color: var(--muted);
   transition: background 0.15s, color 0.15s;
@@ -171,8 +171,8 @@ body {
 }
 .sidebar-cat-item:hover { background: var(--blue-lt); color: var(--blue-dk); }
 .sidebar-cat-item.active { background: var(--blue-lt); color: var(--blue-dk); border-color: #C8DFFA; }
-.sidebar-cat-icon { font-size: 22px; flex-shrink: 0; }
-.sidebar-cat-count { margin-left: auto; font-size: 11px; font-weight: 700; background: var(--border); border-radius: 10px; padding: 1px 7px; color: var(--muted); }
+.sidebar-cat-icon { font-size: 1.375rem; flex-shrink: 0; }
+.sidebar-cat-count { margin-left: auto; font-size: 0.6875rem; font-weight: 700; background: var(--border); border-radius: 10px; padding: 1px 7px; color: var(--muted); }
 .sidebar-cat-item.active .sidebar-cat-count { background: #C8DFFA; color: var(--blue-dk); }
 
 /* ── 頂部列（手機/平板顯示，桌機隱藏） ── */
@@ -225,7 +225,7 @@ body {
 .tbtn.cloud-btn-top:hover { background: white; }
 
 .vol-wrap { display: flex; align-items: center; gap: 5px; }
-.vol-wrap span { font-size: 15px; }
+.vol-wrap span { font-size: 0.9375rem; }
 input[type=range] { width: 60px; accent-color: white; }
 
 /* ── 句子列 ── */
@@ -241,7 +241,7 @@ input[type=range] { width: 60px; accent-color: white; }
 }
 
 .s-label {
-  font-size: 11px;
+  font-size: 0.6875rem;
   color: var(--muted);
   font-weight: 700;
   text-transform: uppercase;
@@ -263,7 +263,7 @@ input[type=range] { width: 60px; accent-color: white; }
   border: 2px solid var(--blue);
   border-radius: 22px;
   padding: 5px 12px;
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 700;
   color: var(--blue-dk);
   display: flex;
@@ -321,7 +321,7 @@ input[type=range] { width: 60px; accent-color: white; }
   align-items: center;
 }
 .emotion-bar::-webkit-scrollbar { display: none; }
-.e-label { font-size: 11px; font-weight: 700; color: #C0BDB5; white-space: nowrap; margin-right: 2px; }
+.e-label { font-size: 0.6875rem; font-weight: 700; color: #C0BDB5; white-space: nowrap; margin-right: 2px; }
 
 .ebtn {
   flex-shrink: 0;
@@ -352,7 +352,7 @@ input[type=range] { width: 60px; accent-color: white; }
   gap: 8px;
   flex-wrap: wrap;
 }
-.cat-edit-label { font-size: 12px; font-weight: 700; color: #92400E; }
+.cat-edit-label { font-size: 0.75rem; font-weight: 700; color: #92400E; }
 .cat-edit-btn {
   background: #FEF3C7;
   border: 2px solid #FCD34D;
@@ -395,8 +395,8 @@ input[type=range] { width: 60px; accent-color: white; }
   user-select: none;
 }
 .cat-tab.active { border-bottom-color: var(--blue); }
-.cat-icon { font-size: clamp(18px, 4vw, 24px); margin-bottom: 2px; }
-.cat-name { font-size: clamp(10px, 2vw, 12px); font-weight: 700; color: var(--muted); }
+.cat-icon { font-size: 1.5rem; margin-bottom: 2px; }
+.cat-name { font-size: 0.75rem; font-weight: 700; color: var(--muted); }
 .cat-tab.active .cat-name { color: var(--blue); }
 
 /* ── 圖卡格線 ── */
@@ -484,7 +484,7 @@ input[type=range] { width: 60px; accent-color: white; }
   right: 5px;
   background: var(--blue);
   color: white;
-  font-size: 10px;
+  font-size: 0.625rem;
   font-weight: 700;
   padding: 2px 6px;
   border-radius: 7px;
@@ -496,7 +496,7 @@ input[type=range] { width: 60px; accent-color: white; }
   left: 5px;
   background: var(--red);
   color: white;
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 700;
   width: 22px;
   height: 22px;
@@ -523,8 +523,8 @@ input[type=range] { width: 60px; accent-color: white; }
   transition: background 0.15s, border-color 0.15s;
 }
 .add-card:hover { background: var(--blue-lt); border-color: var(--blue); }
-.add-icon { font-size: 34px; color: var(--blue); line-height: 1; }
-.add-label { font-size: 12px; font-weight: 700; color: var(--blue); }
+.add-icon { font-size: 2.125rem; color: var(--blue); line-height: 1; }
+.add-label { font-size: 0.75rem; font-weight: 700; color: var(--blue); }
 
 /* ── 快速句子 ── */
 .quick-area {
@@ -533,7 +533,7 @@ input[type=range] { width: 60px; accent-color: white; }
   padding: clamp(7px,1.5vw,10px) var(--pad);
   flex-shrink: 0;
 }
-.q-label { font-size: 11px; font-weight: 700; color: #C0BDB5; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 7px; }
+.q-label { font-size: 0.6875rem; font-weight: 700; color: #C0BDB5; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 7px; }
 .q-list { display: flex; gap: var(--gap); flex-wrap: wrap; }
 
 .qbtn {
@@ -585,7 +585,7 @@ input[type=range] { width: 60px; accent-color: white; }
   color: white;
   padding: 11px 24px;
   border-radius: 30px;
-  font-size: 15px;
+  font-size: 0.9375rem;
   font-weight: 700;
   opacity: 0;
   transition: transform 0.3s cubic-bezier(.34,1.56,.64,1), opacity 0.25s;
@@ -627,16 +627,16 @@ input[type=range] { width: 60px; accent-color: white; }
   scrollbar-width: thin;
 }
 
-.modal-title { font-size: 18px; font-weight: 900; color: var(--text); }
+.modal-title { font-size: 1.125rem; font-weight: 900; color: var(--text); }
 .modal-row { display: flex; flex-direction: column; gap: 6px; }
-.modal-label { font-size: 13px; font-weight: 700; color: var(--muted); }
+.modal-label { font-size: 0.8125rem; font-weight: 700; color: var(--muted); }
 
 .modal-input {
   width: 100%;
   padding: 9px 13px;
   border: 2px solid var(--border);
   border-radius: 11px;
-  font-size: 15px;
+  font-size: 0.9375rem;
   font-family: inherit;
   color: var(--text);
   transition: border-color 0.15s;
@@ -656,7 +656,7 @@ input[type=range] { width: 60px; accent-color: white; }
   flex: 1;
   padding: 9px 0;
   text-align: center;
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 700;
   cursor: pointer;
   background: white;
@@ -681,7 +681,7 @@ input[type=range] { width: 60px; accent-color: white; }
   scrollbar-width: thin;
 }
 .ep-btn {
-  font-size: 21px;
+  font-size: 1.3125rem;
   text-align: center;
   cursor: pointer;
   border-radius: 7px;
@@ -706,9 +706,9 @@ input[type=range] { width: 60px; accent-color: white; }
   transition: background 0.15s, border-color 0.15s;
 }
 .photo-upload-zone:hover { background: #D8EDFC; }
-.puz-icon { font-size: 34px; }
-.puz-text { font-size: 14px; font-weight: 700; color: var(--blue-dk); }
-.puz-sub { font-size: 12px; color: var(--muted); }
+.puz-icon { font-size: 2.125rem; }
+.puz-text { font-size: 0.875rem; font-weight: 700; color: var(--blue-dk); }
+.puz-sub { font-size: 0.75rem; color: var(--muted); }
 
 .photo-preview-wrap { position: relative; display: flex; justify-content: center; }
 .photo-preview { width: 140px; height: 140px; object-fit: cover; border-radius: 16px; border: 3px solid var(--green); box-shadow: var(--shadow); }
@@ -722,7 +722,7 @@ input[type=range] { width: 60px; accent-color: white; }
   width: 26px;
   height: 26px;
   color: white;
-  font-size: 14px;
+  font-size: 0.875rem;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -738,7 +738,7 @@ input[type=range] { width: 60px; accent-color: white; }
   border: none;
   border-radius: 10px;
   padding: 9px 10px;
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 700;
   cursor: pointer;
   font-family: inherit;
@@ -769,15 +769,15 @@ input[type=range] { width: 60px; accent-color: white; }
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 38px;
+  font-size: 2.375rem;
   background: white;
   border: 2px solid var(--border);
   overflow: hidden;
   flex-shrink: 0;
 }
 .cv-preview img { width: 100%; height: 100%; object-fit: cover; }
-.cv-label { font-size: 13px; font-weight: 700; color: var(--text); }
-.cv-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.cv-label { font-size: 0.8125rem; font-weight: 700; color: var(--text); }
+.cv-sub { font-size: 0.6875rem; color: var(--muted); margin-top: 2px; }
 
 /* 顏色點 */
 .color-row { display: flex; gap: 7px; flex-wrap: wrap; }
@@ -799,7 +799,7 @@ input[type=range] { width: 60px; accent-color: white; }
   border: 2px solid var(--border);
   border-radius: 11px;
   padding: 9px 16px;
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 700;
   cursor: pointer;
   color: var(--muted);
@@ -813,7 +813,7 @@ input[type=range] { width: 60px; accent-color: white; }
   border: none;
   border-radius: 11px;
   padding: 9px 20px;
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 700;
   cursor: pointer;
   font-family: inherit;
@@ -827,7 +827,7 @@ input[type=range] { width: 60px; accent-color: white; }
   border: 2px solid #FCA5A5;
   border-radius: 11px;
   padding: 9px 14px;
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 700;
   cursor: pointer;
   font-family: inherit;
@@ -841,7 +841,7 @@ input[type=range] { width: 60px; accent-color: white; }
   background: var(--blue-lt);
   border-radius: 10px;
   padding: 11px 14px;
-  font-size: 12px;
+  font-size: 0.75rem;
   color: var(--blue-dk);
   line-height: 1.7;
   border: 1.5px solid #BAD9F5;
@@ -854,13 +854,13 @@ input[type=range] { width: 60px; accent-color: white; }
   flex-direction: column;
   gap: 9px;
 }
-.cloud-section-title { font-size: 14px; font-weight: 700; color: var(--text); }
-.cloud-section-desc { font-size: 12px; color: var(--muted); line-height: 1.6; }
+.cloud-section-title { font-size: 0.875rem; font-weight: 700; color: var(--text); }
+.cloud-section-desc { font-size: 0.75rem; color: var(--muted); line-height: 1.6; }
 .cloud-action-btn {
   width: 100%;
   padding: 11px 16px;
   border-radius: 11px;
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 700;
   cursor: pointer;
   border: none;
@@ -895,19 +895,19 @@ input[type=range] { width: 60px; accent-color: white; }
   align-items: center;
   justify-content: center;
   color: white;
-  font-size: 18px;
+  font-size: 1.125rem;
   font-weight: 900;
   flex-shrink: 0;
 }
-.profile-name { font-size: 15px; font-weight: 700; }
-.profile-sub { font-size: 11px; color: var(--muted); margin-top: 1px; }
+.profile-name { font-size: 0.9375rem; font-weight: 700; }
+.profile-sub { font-size: 0.6875rem; color: var(--muted); margin-top: 1px; }
 .rename-btn {
   margin-left: auto;
   background: var(--blue-lt);
   border: none;
   border-radius: 9px;
   padding: 6px 11px;
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: 700;
   color: var(--blue-dk);
   cursor: pointer;
@@ -925,7 +925,7 @@ input[type=range] { width: 60px; accent-color: white; }
   gap: 10px;
 }
 .settings-section-title {
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 700;
   color: var(--text);
   display: flex;
@@ -938,8 +938,8 @@ input[type=range] { width: 60px; accent-color: white; }
   justify-content: space-between;
   gap: 10px;
 }
-.toggle-label { font-size: 13px; font-weight: 600; color: var(--text); flex: 1; line-height: 1.4; }
-.toggle-sub   { font-size: 11px; color: var(--muted); }
+.toggle-label { font-size: 0.8125rem; font-weight: 600; color: var(--text); flex: 1; line-height: 1.4; }
+.toggle-sub   { font-size: 0.6875rem; color: var(--muted); }
 .toggle-switch {
   position: relative;
   width: 46px;
@@ -1004,7 +1004,7 @@ input[type=range] { width: 60px; accent-color: white; }
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 16px;
+  font-size: 1.0rem;
   font-weight: 900;
   color: white;
   text-shadow: 0 1px 3px rgba(0,0,0,0.5);
@@ -1027,13 +1027,13 @@ input[type=range] { width: 60px; accent-color: white; }
   width: 40px; height: 40px;
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  font-size: 18px; font-weight: 900; flex-shrink: 0;
+  font-size: 1.125rem; font-weight: 900; flex-shrink: 0;
   color: white;
 }
 .user-info { flex: 1; }
-.user-name { font-size: 14px; font-weight: 700; }
-.user-sub  { font-size: 11px; color: var(--muted); margin-top: 1px; }
-.user-check { font-size: 18px; color: var(--blue); }
+.user-name { font-size: 0.875rem; font-weight: 700; }
+.user-sub  { font-size: 0.6875rem; color: var(--muted); margin-top: 1px; }
+.user-check { font-size: 1.125rem; color: var(--blue); }
 
 .add-user-btn {
   width: 100%;
@@ -1042,7 +1042,7 @@ input[type=range] { width: 60px; accent-color: white; }
   border-radius: 12px;
   background: #F7FBFF;
   color: var(--blue-dk);
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 700;
   cursor: pointer;
   font-family: inherit;
@@ -1068,7 +1068,7 @@ input[type=range] { width: 60px; accent-color: white; }
   color: white;
   padding: 8px 14px;
   border-radius: 20px;
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 700;
   pointer-events: none;
   z-index: 500;
@@ -1128,8 +1128,8 @@ body.unlocked .ctrl-btn-full.locked-ui { display: flex !important; }
 /* 超小手機 */
 @media (max-width: 360px) {
   .speak-btn { padding: 7px 10px; }
-  .tbtn      { padding: 5px 8px; font-size: 11px; }
-  .chip      { padding: 3px 9px; font-size: 12px; }
+  .tbtn      { padding: 5px 8px; font-size: 0.6875rem; }
+  .chip      { padding: 3px 9px; font-size: 0.75rem; }
 }
 
 /* 觸控裝置：加大點擊區域 */
@@ -1161,7 +1161,7 @@ body.unlocked .ctrl-btn-full.locked-ui { display: flex !important; }
     <div class="sidebar-brand-title" id="appTitleDesktop" onclick="openRenameTitle()"
          title="點擊修改標題" style="cursor:pointer; display:flex; align-items:center; gap:6px;">
       <span id="appTitleDesktopText">🗣️ 我的溝通板</span>
-      <span style="font-size:12px; opacity:0.6;">✏️</span>
+      <span style="font-size:0.75rem; opacity:0.6;">✏️</span>
     </div>
     <div class="sidebar-brand-sub">AAC 擴大替代性溝通系統</div>
   </div>
@@ -1174,7 +1174,7 @@ body.unlocked .ctrl-btn-full.locked-ui { display: flex !important; }
         <span>🔊</span>
         <input type="range" id="volSliderDesktop" min="0" max="1" step="0.1" value="0.8"
                aria-label="音量" oninput="syncVol(this.value)">
-        <span id="volPct" style="font-size:11px;color:var(--muted);white-space:nowrap;">80%</span>
+        <span id="volPct" style="font-size:0.6875rem;color:var(--muted);white-space:nowrap;">80%</span>
       </div>
       <button class="ctrl-btn-full" id="rateBtnDesktop" onclick="cycleRate()">⏱ 速度：正常</button>
     </div>
@@ -1219,7 +1219,7 @@ body.unlocked .ctrl-btn-full.locked-ui { display: flex !important; }
 <div class="sentence-bar" role="region" aria-label="句子組成區">
   <div class="s-label" aria-hidden="true">我說：</div>
   <div class="s-chips" id="sChips" role="list" aria-label="已選圖卡">
-    <span style="color:#C0BDB5;font-size:13px;">點擊圖卡來說話...</span>
+    <span style="color:#C0BDB5;font-size:0.8125rem;">點擊圖卡來說話...</span>
   </div>
   <div class="s-actions">
     <button class="speak-btn" onclick="speakSentence()" aria-label="朗讀句子">▶ 說出來</button>
@@ -1241,20 +1241,9 @@ body.unlocked .ctrl-btn-full.locked-ui { display: flex !important; }
 <!-- 圖卡格線 -->
 <div class="symbol-grid" id="symbolGrid" role="main" aria-label="溝通圖卡"></div>
 
-<!-- 快速句子（含感覺區塊） -->
-<div class="quick-area" role="region" aria-label="快速句子與情緒">
-  <div class="q-label">💛 感覺</div>
-  <div class="q-list" id="emotionList">
-    <button class="qbtn emotion-btn" onclick="speakEmotion('我很開心')">😊 開心</button>
-    <button class="qbtn emotion-btn" onclick="speakEmotion('我很難過')">😢 難過</button>
-    <button class="qbtn emotion-btn" onclick="speakEmotion('我很生氣')">😠 生氣</button>
-    <button class="qbtn emotion-btn" onclick="speakEmotion('我很害怕')">😨 害怕</button>
-    <button class="qbtn emotion-btn" onclick="speakEmotion('我很累了')">😴 累了</button>
-    <button class="qbtn emotion-btn" onclick="speakEmotion('我不舒服')">🤒 不舒服</button>
-    <button class="qbtn emotion-btn" onclick="speakEmotion('我需要休息')">💤 休息</button>
-    <button class="qbtn emotion-btn" onclick="speakEmotion('我感到焦慮')">😰 焦慮</button>
-  </div>
-  <div class="q-label" style="margin-top:10px;">⚡ 快速句子</div>
+<!-- 快速句子 -->
+<div class="quick-area" role="region" aria-label="快速句子">
+  <div class="q-label">⚡ 快速句子</div>
   <div class="q-list" id="qList"></div>
 </div>
 
@@ -1543,7 +1532,7 @@ function openRenameTitle() {
              placeholder="例如：小明的溝通板" maxlength="20"
              aria-label="標題名稱">
     </div>
-    <div style="font-size:12px;color:var(--muted);line-height:1.6;">
+    <div style="font-size:0.75rem;color:var(--muted);line-height:1.6;">
       💡 可加入學生姓名，例如「🗣️ 小明的溝通板」<br>
       支援 emoji，讓標題更活潑！
     </div>
@@ -1634,7 +1623,10 @@ function renderQuickPhrases() {
   const q = document.getElementById('qList');
   let html = quickPhrases.map((p, i) => {
     if (editMode)
-      return `<button class="qbtn-del" onclick="deleteQuick(${i})">${p.emoji} ${p.text} ✕</button>`;
+      return `<div style="display:inline-flex;align-items:center;gap:3px;">
+        <button class="qbtn-del" style="border-radius:20px 0 0 20px;border-right:none;" onclick="openEditQuick(${i})">${p.emoji} ${p.text} ✏️</button>
+        <button onclick="deleteQuick(${i})" style="background:#E74C3C;color:white;border:2px solid #C0392B;border-radius:0 20px 20px 0;padding:6px 10px;font-size:0.875rem;font-weight:700;cursor:pointer;line-height:1;">✕</button>
+      </div>`;
     return `<button class="qbtn" onclick="quickSpeak(${i})">${p.emoji} ${p.text}</button>`;
   }).join('');
   if (editMode)
@@ -1642,10 +1634,43 @@ function renderQuickPhrases() {
   q.innerHTML = html;
 }
 
+function openEditQuick(i) {
+  const p = quickPhrases[i]; if (!p) return;
+  openModal(`<div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-title">✏️ 編輯快速句子</div>
+    <div class="modal-row">
+      <div class="modal-label">選擇圖示</div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+        <span id="emojiPreview" style="font-size:1.875rem;">${p.emoji}</span>
+        <span style="font-size:0.6875rem;color:#aaa;">← 目前選擇</span>
+      </div>
+      <div class="emoji-picker">${emojiGrid(p.emoji)}</div>
+      <input type="hidden" id="modalEmoji" value="${p.emoji}">
+    </div>
+    <div class="modal-row">
+      <div class="modal-label">句子內容</div>
+      <input class="modal-input" id="modalLabel" value="${esc(p.text)}" maxlength="20" aria-label="句子內容">
+    </div>
+    <div class="modal-actions">
+      <button class="m-danger" onclick="deleteQuick(${i});forceClose();">🗑 刪除</button>
+      <button class="m-cancel" onclick="forceClose()">取消</button>
+      <button class="m-save" onclick="saveEditQuick(${i})">儲存</button>
+    </div>
+  </div>`);
+}
+
+function saveEditQuick(i) {
+  const e = document.getElementById('modalEmoji').value;
+  const t = document.getElementById('modalLabel').value.trim();
+  if (!t) { alert('請輸入句子'); return; }
+  quickPhrases[i] = { emoji: e, text: t };
+  forceClose(); renderQuickPhrases(); showToast('✅ 已更新：' + t);
+}
+
 function renderSentence() {
   const c = document.getElementById('sChips');
   if (!sentence.length) {
-    c.innerHTML = '<span style="color:#C0BDB5;font-size:13px;">點擊圖卡來說話...</span>';
+    c.innerHTML = '<span style="color:#C0BDB5;font-size:0.8125rem;">點擊圖卡來說話...</span>';
     return;
   }
   c.innerHTML = sentence.map((s, i) => `
@@ -1766,9 +1791,9 @@ function deleteSymbol(i) {
 }
 
 function deleteQuick(i) {
-  if (!confirm('確定刪除這個快速句子？')) return;
   quickPhrases.splice(i, 1);
   renderQuickPhrases();
+  showToast('已刪除');
 }
 
 /* ══════════════════════════════════════════════
@@ -1956,8 +1981,8 @@ function symbolModalHTML(title, s, editIdx) {
       <!-- Emoji 面板 -->
       <div id="emojiPanel" style="display:${initMode === 'emoji' ? '' : 'none'}">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
-          <span id="emojiPreview" style="font-size:30px;">${initEmoji}</span>
-          <span style="font-size:11px;color:#aaa;">← 目前選擇</span>
+          <span id="emojiPreview" style="font-size:1.875rem;">${initEmoji}</span>
+          <span style="font-size:0.6875rem;color:#aaa;">← 目前選擇</span>
         </div>
         <div class="emoji-picker">${emojiGrid(initEmoji)}</div>
       </div>
@@ -2036,8 +2061,8 @@ function openAddQuick() {
     <div class="modal-row">
       <div class="modal-label">選擇圖示</div>
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
-        <span id="emojiPreview" style="font-size:30px;">⭐</span>
-        <span style="font-size:11px;color:#aaa;">← 目前選擇</span>
+        <span id="emojiPreview" style="font-size:1.875rem;">⭐</span>
+        <span style="font-size:0.6875rem;color:#aaa;">← 目前選擇</span>
       </div>
       <div class="emoji-picker">${emojiGrid('⭐')}</div>
       <input type="hidden" id="modalEmoji" value="⭐">
@@ -2070,7 +2095,7 @@ function openAddCat() {
     <div class="modal-row">
       <div class="modal-label">選擇圖示</div>
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
-        <span id="emojiPreview" style="font-size:30px;">📁</span>
+        <span id="emojiPreview" style="font-size:1.875rem;">📁</span>
       </div>
       <div class="emoji-picker">${emojiGrid('📁')}</div>
       <input type="hidden" id="modalEmoji" value="📁">
@@ -2104,7 +2129,7 @@ function openRenameCat() {
     <div class="modal-row">
       <div class="modal-label">選擇圖示</div>
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
-        <span id="emojiPreview" style="font-size:30px;">${cat.icon}</span>
+        <span id="emojiPreview" style="font-size:1.875rem;">${cat.icon}</span>
       </div>
       <div class="emoji-picker">${emojiGrid(cat.icon)}</div>
       <input type="hidden" id="modalEmoji" value="${cat.icon}">
@@ -2320,11 +2345,11 @@ function exportData() {
     forceClose();
     openModal(`<div class="modal" onclick="event.stopPropagation()">
       <div class="modal-title">📋 手動儲存備份</div>
-      <div style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:8px;">
+      <div style="font-size:0.8125rem;color:var(--muted);line-height:1.6;margin-bottom:8px;">
         瀏覽器限制自動下載，請全選以下內容並複製，貼到記事本後儲存為 <strong>.json</strong> 檔案。
       </div>
       <textarea id="backupText" readonly
-        style="width:100%;height:160px;font-family:monospace;font-size:11px;padding:8px;border:2px solid var(--border);border-radius:10px;resize:none;"
+        style="width:100%;height:160px;font-family:monospace;font-size:0.6875rem;padding:8px;border:2px solid var(--border);border-radius:10px;resize:none;"
       ></textarea>
       <div class="modal-actions">
         <button class="m-cancel" onclick="forceClose()">關閉</button>
@@ -2350,14 +2375,14 @@ function openPasteRestore() {
   forceClose();
   openModal(`<div class="modal" onclick="event.stopPropagation()">
     <div class="modal-title">📋 貼上 JSON 還原</div>
-    <div style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:4px;">
+    <div style="font-size:0.8125rem;color:var(--muted);line-height:1.6;margin-bottom:4px;">
       用記事本開啟備份 .json 檔案，全選內容（Ctrl+A），複製（Ctrl+C），再貼到下方：
     </div>
     <textarea id="pasteArea"
-      style="width:100%;height:180px;font-family:monospace;font-size:11px;padding:8px;
+      style="width:100%;height:180px;font-family:monospace;font-size:0.6875rem;padding:8px;
              border:2px solid var(--border);border-radius:10px;resize:vertical;"
       placeholder='將 JSON 內容貼在這裡...'></textarea>
-    <div id="pasteError" style="color:var(--red);font-size:12px;font-weight:700;display:none;"></div>
+    <div id="pasteError" style="color:var(--red);font-size:0.75rem;font-weight:700;display:none;"></div>
     <div class="modal-actions">
       <button class="m-cancel" onclick="forceClose()">取消</button>
       <button class="m-save" onclick="doRestoreFromText()">✅ 套用還原</button>
@@ -2563,16 +2588,16 @@ function openSettings() {
       <div class="settings-section-title">🔤 圖卡文字大小</div>
       <div class="font-size-btns">
         <button class="fs-btn ${s.fontSize==='normal'?'active':''}" onclick="setFontSize('normal',this)">
-          <div style="font-size:13px; font-weight:700;">標準</div>
-          <div style="font-size:11px; color:var(--muted);">預設</div>
+          <div style="font-size:0.8125rem; font-weight:700;">標準</div>
+          <div style="font-size:0.6875rem; color:var(--muted);">預設</div>
         </button>
         <button class="fs-btn ${s.fontSize==='large'?'active':''}" onclick="setFontSize('large',this)">
-          <div style="font-size:16px; font-weight:700;">大字</div>
-          <div style="font-size:11px; color:var(--muted);">+25%</div>
+          <div style="font-size:1.0rem; font-weight:700;">大字</div>
+          <div style="font-size:0.6875rem; color:var(--muted);">+25%</div>
         </button>
         <button class="fs-btn ${s.fontSize==='xlarge'?'active':''}" onclick="setFontSize('xlarge',this)">
-          <div style="font-size:19px; font-weight:700;">超大</div>
-          <div style="font-size:11px; color:var(--muted);">+60%</div>
+          <div style="font-size:1.1875rem; font-weight:700;">超大</div>
+          <div style="font-size:0.6875rem; color:var(--muted);">+60%</div>
         </button>
       </div>
     </div>
@@ -2587,7 +2612,7 @@ function openSettings() {
                title="${p.label}"
                onclick="setBgColor('${p.color}',this)"></div>`).join('')}
       </div>
-      <div style="font-size:11px;color:var(--muted);margin-top:4px;">點擊色塊即時預覽</div>
+      <div style="font-size:0.6875rem;color:var(--muted);margin-top:4px;">點擊色塊即時預覽</div>
     </div>
 
     <div class="modal-actions">
@@ -2615,11 +2640,12 @@ function applySettings() {
   // 背景色
   document.body.style.background = settings.bgColor;
   document.documentElement.style.setProperty('--bg', settings.bgColor);
-  // 字體大小
-  const scale = settings.fontSize === 'xlarge' ? 1.6 : settings.fontSize === 'large' ? 1.25 : 1;
-  document.documentElement.style.setProperty('--label-size', `clamp(${Math.round(11*scale)}px, ${2*scale}vw, ${Math.round(14*scale)}px)`);
-  document.documentElement.style.setProperty('--emoji-size',  `clamp(${Math.round(32*scale)}px, ${7*scale}vw, ${Math.round(46*scale)}px)`);
-  document.documentElement.style.setProperty('--visual-size', `clamp(${Math.round(52*scale)}px, ${10*scale}vw, ${Math.round(72*scale)}px)`);
+
+  // 全站縮放：設定 html font-size 基準，所有 rem 單位同步縮放
+  const scale = settings.fontSize === 'xlarge' ? 1.5
+              : settings.fontSize === 'large'  ? 1.25
+              : 1;
+  document.documentElement.style.fontSize = (16 * scale) + 'px';
 }
 
 function applyAndSaveSettings() {
@@ -2646,15 +2672,15 @@ function openUserPanel() {
           </div>
           ${u.id === currentUserId ? '<span class="user-check">✓</span>' : ''}
           <button onclick="event.stopPropagation();deleteUser('${u.id}')"
-                  style="margin-left:4px;background:#FEF2F2;border:none;border-radius:7px;padding:4px 8px;font-size:12px;color:#991B1B;cursor:pointer;">刪除</button>
+                  style="margin-left:4px;background:#FEF2F2;border:none;border-radius:7px;padding:4px 8px;font-size:0.75rem;color:#991B1B;cursor:pointer;">刪除</button>
         </div>`).join('')
-    : `<div style="text-align:center;padding:16px;color:var(--muted);font-size:13px;">
+    : `<div style="text-align:center;padding:16px;color:var(--muted);font-size:0.8125rem;">
          尚未建立任何帳號<br>點下方按鈕新增第一個使用者
        </div>`;
 
   openModal(`<div class="modal" onclick="event.stopPropagation()">
     <div class="modal-title">👤 切換使用者</div>
-    <div style="font-size:12px;color:var(--muted);line-height:1.6;background:var(--blue-lt);border-radius:9px;padding:9px 12px;">
+    <div style="font-size:0.75rem;color:var(--muted);line-height:1.6;background:var(--blue-lt);border-radius:9px;padding:9px 12px;">
       💡 每個使用者有獨立的圖卡設定。切換後系統會自動載入該使用者的資料。
     </div>
     <div style="display:flex;flex-direction:column;gap:8px;" id="userList">${list}</div>
@@ -2721,10 +2747,10 @@ function switchUser(id) {
     forceClose();
     openModal(`<div class="modal" onclick="event.stopPropagation()">
       <div class="modal-title">🔑 輸入 PIN 碼</div>
-      <div style="font-size:14px;font-weight:700;text-align:center;padding:8px 0;">切換到「${esc(u.name)}」</div>
+      <div style="font-size:0.875rem;font-weight:700;text-align:center;padding:8px 0;">切換到「${esc(u.name)}」</div>
       <input class="modal-input" id="pinInput" type="password" inputmode="numeric"
              maxlength="4" pattern="[0-9]*" placeholder="請輸入 4 位 PIN 碼"
-             style="text-align:center;font-size:24px;letter-spacing:8px;"
+             style="text-align:center;font-size:1.5rem;letter-spacing:8px;"
              oninput="if(this.value.length===4)doSwitchUser('${id}',this.value)">
       <div class="modal-actions">
         <button class="m-cancel" onclick="forceClose();openUserPanel()">取消</button>

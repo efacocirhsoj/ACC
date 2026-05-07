@@ -1213,18 +1213,43 @@ body.unlocked .ctrl-btn-full.locked-ui { display: flex !important; }
 }
 .qbtn.emotion-btn:hover { background: #F7E3FF; }
 
-/* 方向鎖定：手機橫式時強制旋轉畫面為直式 */
+/* 方向提示層：手機橫式時顯示 */
 @media screen and (max-width: 959px) and (orientation: landscape) {
-  html {
-    transform: rotate(-90deg);
-    transform-origin: left top;
-    width: 100vh;
-    height: 100vw;
-    overflow: hidden;
-    position: absolute;
-    top: 100%;
-    left: 0;
-  }
+  .landscape-overlay { display: flex !important; }
+}
+
+.landscape-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: #1A1A18;
+  z-index: 9999;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  color: white;
+  text-align: center;
+  padding: 20px;
+}
+.landscape-overlay .lo-icon {
+  font-size: 3rem;
+  animation: rotateHint 1.5s ease-in-out infinite;
+}
+.landscape-overlay .lo-text {
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1.6;
+}
+.landscape-overlay .lo-sub {
+  font-size: 0.8rem;
+  opacity: 0.6;
+}
+@keyframes rotateHint {
+  0%   { transform: rotate(0deg); }
+  40%  { transform: rotate(-90deg); }
+  60%  { transform: rotate(-90deg); }
+  100% { transform: rotate(0deg); }
 }
 
 @keyframes pop {
@@ -1285,6 +1310,13 @@ body.unlocked .ctrl-btn-full.locked-ui { display: flex !important; }
 <body>
 
 <h1 class="sr-only">我的溝通板 — AAC 擴大替代性溝通系統</h1>
+
+<!-- 橫式提示層 -->
+<div class="landscape-overlay">
+  <div class="lo-icon">📱</div>
+  <div class="lo-text">請將裝置轉回直式<br>以使用溝通板</div>
+  <div class="lo-sub">本系統最佳顯示方向為直式</div>
+</div>
 
 <div class="app-layout">
 

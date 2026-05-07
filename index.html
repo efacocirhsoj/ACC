@@ -616,7 +616,30 @@ input[type=range] { width: 60px; accent-color: white; }
   flex-shrink: 0;
 }
 .q-label { font-size: 0.6875rem; font-weight: 700; color: #C0BDB5; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 7px; }
-.q-list { display: flex; gap: var(--gap); flex-wrap: wrap; }
+.q-list {
+  display: flex;
+  gap: var(--gap);
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  padding-bottom: 4px;
+}
+.q-list::-webkit-scrollbar { display: none; }
+
+/* 每個按鈕固定佔 1/3 寬度 */
+.qbtn, .qbtn-del, .qbtn-add {
+  flex-shrink: 0;
+  width: calc((100% - var(--gap) * 2) / 3);
+  scroll-snap-align: start;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
 .qbtn {
   background: #FFFBEB;
@@ -1168,6 +1191,17 @@ body.unlocked .ctrl-group.locked-ui { display: flex !important; }
 body.unlocked .tbtn.locked-ui       { display: inline-flex !important; align-items:center; }
 body.unlocked .ctrl-btn-full.locked-ui { display: flex !important; }
 
+/* 編輯模式下的配對按鈕組合（✏️ + ✕）也固定寬度 */
+.q-list > div {
+  flex-shrink: 0;
+  width: calc((100% - var(--gap) * 2) / 3);
+  scroll-snap-align: start;
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+}
+.q-list > div .qbtn-del { width: auto; flex: 1; min-width: 0; }
+
 /* 感覺按鈕（快速句子區） */
 .qbtn.emotion-btn {
   background: #FEF3FF;
@@ -1202,9 +1236,11 @@ body.unlocked .ctrl-btn-full.locked-ui { display: flex !important; }
 /* 桌機：隱藏行動裝置元件 */
 @media (min-width: 960px) {
   .cat-edit-bar { padding: 7px 16px; }
-  .symbol-grid  { padding: 16px; }
   .quick-area   { padding: 10px 16px; }
   .sentence-bar { padding: 10px 16px; min-height: 80px; }
+  .q-list { flex-wrap: wrap; overflow-x: visible; scroll-snap-type: unset; }
+  .qbtn, .qbtn-del, .qbtn-add { width: auto; scroll-snap-align: unset; }
+  .q-list > div { width: auto; scroll-snap-align: unset; }
 }
 
 /* 超小手機 */

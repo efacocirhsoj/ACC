@@ -1671,9 +1671,10 @@ let lastSavedAt = null;
 
 // 設定
 let settings = {
-  soundOnClick: true,      // 點圖卡發音
-  fontSize: 'normal',      // 'normal' | 'large' | 'xlarge'
-  bgColor: '#FFF9F2',      // 背景色
+  soundOnClick: true,
+  fontSize: 'normal',
+  bgColor: '#FFF9F2',
+  showQuickBar: true,
 };
 
 // 多使用者
@@ -1741,7 +1742,7 @@ function loadState() {
       profileName   = d.profileName  || '使用者';
       appTitle      = d.appTitle     || '🗣️ 我的溝通板';
       lastSavedAt   = d.savedAt      || null;
-      settings      = Object.assign({ soundOnClick:true, fontSize:'normal', bgColor:'#FFF9F2' }, d.settings || {});
+      settings      = Object.assign({ soundOnClick:true, fontSize:'normal', bgColor:'#FFF9F2', showQuickBar:true }, d.settings || {});
       users         = d.users        || [];
       currentUserId = d.currentUserId|| null;
       if (!cats.find(c => c.id === currentCat)) currentCat = cats[0]?.id || 'need';
@@ -2600,7 +2601,7 @@ function applyBackupData(d) {
   quickPhrases = d.quickPhrases;
   profileName  = d.profileName || profileName;
   appTitle     = d.appTitle    || appTitle;
-  if (d.settings) settings = Object.assign({ soundOnClick:true, fontSize:'normal', bgColor:'#FFF9F2' }, d.settings);
+  if (d.settings) settings = Object.assign({ soundOnClick:true, fontSize:'normal', bgColor:'#FFF9F2', showQuickBar:true }, d.settings);
   if (!cats.find(c => c.id === currentCat)) currentCat = cats[0]?.id || 'need';
   forceClose();
   saveState();
@@ -2840,7 +2841,7 @@ function doRestoreFromText() {
   appTitle     = d.appTitle    || appTitle;
 
   if (d.settings && typeof d.settings === 'object') {
-    settings = Object.assign({ soundOnClick: true, fontSize: 'normal', bgColor: '#FFF9F2' }, d.settings);
+    settings = Object.assign({ soundOnClick: true, fontSize: 'normal', bgColor: '#FFF9F2', showQuickBar: true }, d.settings);
   }
 
   if (!cats.find(function(c) { return c.id === currentCat; })) {
@@ -2924,7 +2925,7 @@ function handleFileImport(e) {
       appTitle     = d.appTitle     || appTitle;
       if (d.settings) {
         settings = Object.assign(
-          { soundOnClick: true, fontSize: 'normal', bgColor: '#FFF9F2' },
+          { soundOnClick: true, fontSize: 'normal', bgColor: '#FFF9F2', showQuickBar: true },
           d.settings
         );
       }
@@ -2992,6 +2993,22 @@ function openSettings() {
       </div>
     </div>
 
+    <!-- 顯示設定 -->
+    <div class="settings-section">
+      <div class="settings-section-title">👁 顯示設定</div>
+      <div class="toggle-row">
+        <div>
+          <div class="toggle-label">顯示快速句子區塊</div>
+          <div class="toggle-sub">關閉可讓圖卡區佔更多空間</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="chkQuickBar" ${s.showQuickBar !== false ? 'checked' : ''}
+                 onchange="settings.showQuickBar=this.checked;applySettings();">
+          <span class="toggle-track"></span>
+        </label>
+      </div>
+    </div>
+
     <!-- 字體 -->
     <div class="settings-section">
       <div class="settings-section-title">🔤 圖卡文字大小</div>
@@ -3050,20 +3067,20 @@ function applySettings() {
   document.body.style.background = settings.bgColor;
   document.documentElement.style.setProperty('--bg', settings.bgColor);
 
-  // 縮放比例
+  // 全站縮放
   const scale = settings.fontSize === 'xlarge' ? 1.5
               : settings.fontSize === 'large'  ? 1.25
               : 1;
-
-  // html 基準（影響所有 rem 單位）
   document.documentElement.style.fontSize = (16 * scale) + 'px';
-
-  // 圖卡尺寸（px → 跟 scale 同步）
   document.documentElement.style.setProperty('--card-min',    Math.round(90  * scale) + 'px');
   document.documentElement.style.setProperty('--visual-size', Math.round(54  * scale) + 'px');
   document.documentElement.style.setProperty('--emoji-size',  Math.round(36  * scale) + 'px');
   document.documentElement.style.setProperty('--gap',         Math.round(8   * scale) + 'px');
   document.documentElement.style.setProperty('--pad',         Math.round(10  * scale) + 'px');
+
+  // 快速句子顯示/隱藏
+  const qa = document.querySelector('.quick-area');
+  if (qa) qa.style.display = settings.showQuickBar ? '' : 'none';
 }
 
 function applyAndSaveSettings() {
@@ -3209,7 +3226,7 @@ function loadUserData(userId) {
       symbols      = d.symbols      || cloneDefault('symbols');
       quickPhrases = d.quickPhrases || cloneDefault('quickPhrases');
       appTitle     = d.appTitle     || '🗣️ 我的溝通板';
-      settings     = Object.assign({ soundOnClick:true, fontSize:'normal', bgColor:'#FFF9F2' }, d.settings || {});
+      settings     = Object.assign({ soundOnClick:true, fontSize:'normal', bgColor:'#FFF9F2', showQuickBar:true }, d.settings || {});
       currentCat   = cats[0]?.id || 'need';
       applySettings();
       return;
@@ -3220,7 +3237,7 @@ function loadUserData(userId) {
   symbols      = cloneDefault('symbols');
   quickPhrases = cloneDefault('quickPhrases');
   appTitle     = '🗣️ 我的溝通板';
-  settings     = { soundOnClick:true, fontSize:'normal', bgColor:'#FFF9F2' };
+  settings     = { soundOnClick:true, fontSize:'normal', bgColor:'#FFF9F2', showQuickBar:true };
   currentCat   = 'need';
   applySettings();
 }
@@ -3299,7 +3316,7 @@ document.getElementById('fileInput').addEventListener('change', function() {
     appTitle     = d.appTitle    || appTitle;
 
     if (d.settings && typeof d.settings === 'object') {
-      settings = Object.assign({ soundOnClick: true, fontSize: 'normal', bgColor: '#FFF9F2' }, d.settings);
+      settings = Object.assign({ soundOnClick: true, fontSize: 'normal', bgColor: '#FFF9F2', showQuickBar: true }, d.settings);
     }
 
     if (!cats.find(function(c) { return c.id === currentCat; })) {

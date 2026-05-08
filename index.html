@@ -3,15 +3,25 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+
+<!-- PWA / App 設定 -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="溝通板">
 <meta name="apple-touch-fullscreen" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#3B7DD8">
 <meta name="msapplication-navbutton-color" content="#3B7DD8">
-<!-- 方向鎖定 manifest（加到主畫面後生效） -->
-<link rel="manifest" href="data:application/manifest+json,{&quot;name&quot;:&quot;我的溝通板&quot;,&quot;display&quot;:&quot;fullscreen&quot;,&quot;orientation&quot;:&quot;portrait&quot;,&quot;theme_color&quot;:&quot;%233B7DD8&quot;,&quot;background_color&quot;:&quot;%23FFF9F2&quot;}">
-<title>我的溝通板 — AAC 輔助溝通系統</title>
+<meta name="application-name" content="溝通板">
+<meta name="description" content="AAC 擴大替代性溝通系統 — 專為無口語學生設計">
+
+<!-- Apple Touch Icon（SVG 生成的藍色圖示） -->
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%233B7DD8'/%3E%3Ctext x='256' y='340' font-size='280' text-anchor='middle'%3E🗣️%3C/text%3E%3C/svg%3E">
+
+<!-- Web App Manifest（inline blob，單 HTML 檔免外部依賴） -->
+<link rel="manifest" id="pwaManifest">
+
+<title>溝通板 — AAC 輔助溝通系統</title>
 <style>
 /* ═══════════════════════════════════════════════
    AAC 溝通板 v4 — 完整獨立網頁版
@@ -1430,6 +1440,10 @@ body.unlocked .ctrl-btn-full.locked-ui { display: flex !important; }
       <button class="ctrl-btn-full cloud locked-ui" onclick="openCloudModal()">☁️ 備份 / 還原</button>
       <button class="ctrl-btn-full locked-ui" onclick="openSettings()" style="background:#F3F0EB;">⚙️ 外觀設定</button>
       <button class="ctrl-btn-full locked-ui" onclick="openUserPanel()" style="background:#F3F0EB;">👤 切換使用者</button>
+      <button id="installAppBtn" class="ctrl-btn-full" onclick="installApp()"
+              style="background:#EEF7FF;color:#185FA5;border:2px solid #AAD4F8;display:none;">
+        📲 安裝為 App
+      </button>
     </div>
   </div>
 
@@ -1452,6 +1466,8 @@ body.unlocked .ctrl-btn-full.locked-ui { display: flex !important; }
     <button class="tbtn locked-ui" id="rateBtn" onclick="cycleRate()" aria-label="切換語速">速度:正常</button>
     <button class="tbtn locked-ui" onclick="openSettings()" aria-label="外觀設定">⚙️</button>
     <button class="tbtn locked-ui" onclick="openUserPanel()" aria-label="切換使用者">👤</button>
+    <button id="installAppBtnMobile" class="tbtn locked-ui" onclick="installApp()"
+            style="background:rgba(255,255,255,0.9);color:#185FA5;display:none;" aria-label="安裝為App">📲</button>
     <button class="tbtn" id="editToggleShow" onclick="requestEdit()" aria-label="進入編輯模式">✏️ 編輯</button>
     <button class="tbtn done" id="editToggleDone" onclick="toggleEdit()" style="display:none;" aria-label="完成編輯">✅ 完成</button>
     <button class="tbtn cloud-btn-top locked-ui" onclick="openCloudModal()" aria-label="備份與還原">☁️</button>
@@ -3328,6 +3344,109 @@ document.addEventListener('keydown', e => {
     speakSentence();
   }
 });
+
+/* ══════════════════════════════════════════════
+   PWA 初始化
+══════════════════════════════════════════════ */
+
+// 1. 動態注入 Web App Manifest（支援 Android「加入主畫面」安裝）
+(function injectManifest() {
+  const iconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="100" fill="#3B7DD8"/><text x="256" y="340" font-size="280" text-anchor="middle">🗣️</text></svg>`;
+  const iconB64 = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(iconSvg)));
+
+  const manifest = {
+    name: profileName + '的溝通板',
+    short_name: '溝通板',
+    description: 'AAC 擴大替代性溝通系統',
+    start_url: location.href,
+    display: 'fullscreen',
+    orientation: 'portrait',
+    theme_color: '#3B7DD8',
+    background_color: '#FFF9F2',
+    lang: 'zh-TW',
+    icons: [
+      { src: iconB64, sizes: '192x192', type: 'image/svg+xml', purpose: 'any maskable' },
+      { src: iconB64, sizes: '512x512', type: 'image/svg+xml', purpose: 'any maskable' },
+    ],
+    shortcuts: [
+      { name: '開啟溝通板', short_name: '溝通板', url: location.href, icons: [{ src: iconB64, sizes: '192x192' }] }
+    ]
+  };
+
+  const blob = new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' });
+  const url  = URL.createObjectURL(blob);
+  const link = document.getElementById('pwaManifest');
+  if (link) link.href = url;
+})();
+
+// 2. 註冊 Service Worker（快取離線使用）
+if ('serviceWorker' in navigator) {
+  const swCode = `
+const CACHE = 'aac-sw-v1';
+self.addEventListener('install', e => {
+  self.skipWaiting();
+});
+self.addEventListener('activate', e => {
+  e.waitUntil(clients.claim());
+});
+self.addEventListener('fetch', e => {
+  // 只快取 GET，跳過 chrome-extension
+  if (e.request.method !== 'GET') return;
+  if (!e.request.url.startsWith('http')) return;
+  e.respondWith(
+    caches.open(CACHE).then(cache =>
+      cache.match(e.request).then(cached => {
+        const fresh = fetch(e.request).then(res => {
+          if (res && res.status === 200) cache.put(e.request, res.clone());
+          return res;
+        }).catch(() => cached);
+        return cached || fresh;
+      })
+    )
+  );
+});
+  `;
+  const swBlob = new Blob([swCode], { type: 'application/javascript' });
+  const swUrl  = URL.createObjectURL(swBlob);
+  navigator.serviceWorker.register(swUrl, { scope: './' })
+    .then(() => console.log('[AAC] Service Worker 已註冊'))
+    .catch(err => console.warn('[AAC] SW 註冊失敗:', err));
+}
+
+// 3. Android「加入主畫面」安裝提示
+let deferredInstallPrompt = null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredInstallPrompt = e;
+  // 解鎖後顯示安裝按鈕
+  updateInstallBtn(true);
+});
+
+window.addEventListener('appinstalled', () => {
+  deferredInstallPrompt = null;
+  updateInstallBtn(false);
+  showToast('✅ 已安裝為 App！');
+});
+
+function updateInstallBtn(show) {
+  const btn  = document.getElementById('installAppBtn');
+  const btnM = document.getElementById('installAppBtnMobile');
+  if (btn)  btn.style.display  = show ? '' : 'none';
+  if (btnM) btnM.style.display = show ? '' : 'none';
+}
+
+function installApp() {
+  if (!deferredInstallPrompt) {
+    showToast('請用 Chrome 瀏覽器開啟，再點「加入主畫面」', 'warn');
+    return;
+  }
+  deferredInstallPrompt.prompt();
+  deferredInstallPrompt.userChoice.then(choice => {
+    if (choice.outcome === 'accepted') showToast('✅ 正在安裝…');
+    deferredInstallPrompt = null;
+    updateInstallBtn(false);
+  });
+}
 </script>
 </body>
 </html>

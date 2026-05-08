@@ -1261,6 +1261,49 @@ body.unlocked .ctrl-btn-full.locked-ui { display: flex !important; }
   100% { transform: rotate(0deg); }
 }
 
+/* ── 分類排序列表 ── */
+.sort-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 55vh;
+  overflow-y: auto;
+}
+.sort-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--bg);
+  border: 2px solid var(--border);
+  border-radius: 11px;
+  padding: 10px 12px;
+  user-select: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+.sort-item.drag-over {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(59,125,216,.2);
+}
+.sort-item.dragging { opacity: 0.35; }
+.sort-handle { font-size: 1.1rem; color: #CCC; flex-shrink: 0; cursor: grab; }
+.sort-icon   { font-size: 1.3rem; flex-shrink: 0; }
+.sort-name   { font-size: 0.9375rem; font-weight: 700; flex: 1; }
+.sort-move   { display: flex; flex-direction: column; gap: 2px; flex-shrink: 0; }
+.sort-move button {
+  background: var(--blue-lt);
+  border: 1.5px solid #AAD4F8;
+  border-radius: 6px;
+  width: 28px; height: 28px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--blue-dk); font-weight: 700;
+  font-family: inherit;
+  transition: background .12s;
+}
+.sort-move button:hover { background: #C8DFFA; }
+.sort-move button:disabled { opacity: 0.25; cursor: default; }
+
 @keyframes pop {
   0%   { transform: scale(1); }
   40%  { transform: scale(1.14); }
@@ -1408,6 +1451,7 @@ body.unlocked .ctrl-btn-full.locked-ui { display: flex !important; }
   <span class="cat-edit-label">📂 分類管理：</span>
   <button class="cat-edit-btn" onclick="openAddCat()">＋ 新增分類</button>
   <button class="cat-edit-btn" onclick="openRenameCat()">✏️ 重新命名</button>
+  <button class="cat-edit-btn" onclick="openSortCats()">↕️ 排序</button>
   <button class="cat-edit-btn danger" onclick="deleteCat()">🗑 刪除分類</button>
 </div>
 
@@ -2335,6 +2379,93 @@ function saveAddQuick() {
 /* ══════════════════════════════════════════════
    分類管理模態框
 ══════════════════════════════════════════════ */
+/* ── 分類排序 ── */
+function openSortCats() {
+  renderSortModal();
+}
+
+function renderSortModal() {
+  const items = cats.map((c, i) => `
+    <div class="sort-item" data-id="${c.id}" draggable="true"
+         ondragstart="sortDragStart(event,${i})"
+         ondragover="sortDragOver(event,${i})"
+         ondrop="sortDrop(event,${i})"
+         ondragend="sortDragEnd(event)">
+      <span class="sort-handle">☰</span>
+      <span class="sort-icon">${c.icon}</span>
+      <span class="sort-name">${esc(c.name)}</span>
+      <div class="sort-move">
+        <button onclick="moveCat(${i},-1)" ${i===0?'disabled':''} title="上移">▲</button>
+        <button onclick="moveCat(${i}, 1)" ${i===cats.length-1?'disabled':''} title="下移">▼</button>
+      </div>
+    </div>`).join('');
+
+  openModal(`<div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-title">↕️ 分類排序</div>
+    <div style="font-size:0.8125rem;color:var(--muted);line-height:1.6;">
+      點擊 ▲▼ 移動，或拖曳 ☰ 手柄調整順序。
+    </div>
+    <div class="sort-list" id="sortList">${items}</div>
+    <div class="modal-actions">
+      <button class="m-cancel" onclick="forceClose()">取消</button>
+      <button class="m-save" onclick="saveSortCats()">✅ 儲存順序</button>
+    </div>
+  </div>`);
+}
+
+let _dragSrcIdx = null;
+
+function sortDragStart(e, i) {
+  _dragSrcIdx = i;
+  e.currentTarget.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+}
+
+function sortDragOver(e, i) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  document.querySelectorAll('.sort-item').forEach(el => el.classList.remove('drag-over'));
+  e.currentTarget.classList.add('drag-over');
+}
+
+function sortDrop(e, i) {
+  e.preventDefault();
+  if (_dragSrcIdx === null || _dragSrcIdx === i) return;
+  const moved = cats.splice(_dragSrcIdx, 1)[0];
+  cats.splice(i, 0, moved);
+  _dragSrcIdx = null;
+  renderSortModal();
+}
+
+function sortDragEnd(e) {
+  _dragSrcIdx = null;
+  document.querySelectorAll('.sort-item').forEach(el => {
+    el.classList.remove('dragging', 'drag-over');
+  });
+}
+
+function moveCat(i, dir) {
+  const j = i + dir;
+  if (j < 0 || j >= cats.length) return;
+  [cats[i], cats[j]] = [cats[j], cats[i]];
+  renderSortModal();
+}
+
+function saveSortCats() {
+  // 從 DOM 讀取目前排序（避免 drag 沒有呼叫 drop 時資料不一致）
+  const listEl = document.getElementById('sortList');
+  if (listEl) {
+    const ids = Array.from(listEl.querySelectorAll('.sort-item'))
+                     .map(el => el.dataset.id);
+    const sorted = ids.map(id => cats.find(c => c.id === id)).filter(Boolean);
+    if (sorted.length === cats.length) cats = sorted;
+  }
+  forceClose();
+  saveState();
+  renderAll();
+  showToast('✅ 分類順序已儲存');
+}
+
 function openAddCat() {
   openModal(`<div class="modal" onclick="event.stopPropagation()">
     <div class="modal-title">📂 新增分類</div>

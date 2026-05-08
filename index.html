@@ -263,70 +263,94 @@ input[type=range] { width: 60px; accent-color: white; }
 .sentence-bar {
   background: var(--surface);
   border-bottom: 3px solid var(--blue);
-  padding: 10px var(--pad);
+  padding: 8px var(--pad);
   display: flex;
   align-items: flex-start;
   gap: 8px;
-  min-height: 90px;
-  max-height: 160px;
-  flex-wrap: wrap;
+  min-height: 100px;
+  max-height: 200px;
   flex-shrink: 0;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
 
-.s-label {
-  font-size: 0.6875rem;
-  color: var(--muted);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.6px;
-  white-space: nowrap;
+.s-placeholder {
+  color: #C8C5BC;
+  font-size: 0.8125rem;
+  font-style: italic;
+  padding: 6px 2px;
+  align-self: center;
 }
 
 .s-chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 5px;
+  gap: 6px;
   flex: 1;
   align-items: flex-start;
   align-content: flex-start;
-  min-width: 80px;
+  min-width: 0;
 }
 
+/* 圖卡方塊樣式（取代原本的膠囊） */
 .chip {
   background: var(--blue-lt);
   border: 2px solid var(--blue);
-  border-radius: 22px;
-  padding: 5px 12px;
-  font-size: 0.875rem;
+  border-radius: 10px;
+  padding: 6px 8px;
+  min-width: 52px;
+  max-width: 90px;
+  font-size: 0.75rem;
   font-weight: 700;
   color: var(--blue-dk);
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 5px;
+  gap: 3px;
   cursor: pointer;
   transition: background 0.1s, transform 0.1s;
   font-family: inherit;
+  text-align: center;
+  word-break: break-all;
+  /* 新增動畫 */
+  animation: chipIn 0.18s cubic-bezier(.34,1.56,.64,1);
 }
-.chip:hover { background: #D4E9FB; transform: scale(0.97); }
-.chip-photo { width: 22px; height: 22px; border-radius: 50%; object-fit: cover; }
+@keyframes chipIn {
+  from { opacity: 0; transform: scale(0.6) translateY(6px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+.chip:hover { background: #D4E9FB; transform: scale(0.96); }
+.chip-emoji { font-size: 1.4rem; line-height: 1; }
+.chip-photo { width: 32px; height: 32px; border-radius: 6px; object-fit: cover; }
+.chip-text  { font-size: 0.6875rem; font-weight: 700; line-height: 1.2; }
 
-.s-actions { display: flex; gap: 6px; margin-left: auto; flex-shrink: 0; align-self: flex-start; }
+.s-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex-shrink: 0;
+  align-self: stretch;
+}
 
 .speak-btn {
   background: var(--green);
   color: white;
   border: none;
   border-radius: var(--radius);
-  padding: clamp(8px,1.5vw,11px) clamp(12px,2.5vw,18px);
-  font-size: clamp(13px, 2vw, 16px);
+  padding: 0 14px;
+  font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
   font-family: inherit;
   transition: background 0.15s, transform 0.1s;
   box-shadow: 0 2px 8px rgba(39,174,96,0.35);
   white-space: nowrap;
+  flex: 1;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
 }
 .speak-btn:hover { background: var(--green-dk); }
 .speak-btn:active { transform: scale(0.96); }
@@ -336,12 +360,17 @@ input[type=range] { width: 60px; accent-color: white; }
   color: white;
   border: none;
   border-radius: var(--radius);
-  padding: clamp(8px,1.5vw,11px) clamp(10px,2vw,14px);
-  font-size: clamp(13px, 2vw, 16px);
+  padding: 0 14px;
+  font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
   font-family: inherit;
   transition: background 0.15s;
+  flex: 1;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .clear-btn:hover { background: var(--red-dk); }
 
@@ -1436,9 +1465,8 @@ body.unlocked .ctrl-btn-full.locked-ui { display: flex !important; }
 
 <!-- 句子列 -->
 <div class="sentence-bar" role="region" aria-label="句子組成區">
-  <div class="s-label" aria-hidden="true">我說：</div>
   <div class="s-chips" id="sChips" role="list" aria-label="已選圖卡">
-    <span style="color:#C0BDB5;font-size:0.8125rem;">點擊圖卡來說話...</span>
+    <span class="s-placeholder">點擊下方圖卡加入句子…</span>
   </div>
   <div class="s-actions">
     <button class="speak-btn" onclick="speakSentence()" aria-label="朗讀句子">▶ 說出來</button>
@@ -1960,15 +1988,19 @@ function saveEditQuick(i) {
 function renderSentence() {
   const c = document.getElementById('sChips');
   if (!sentence.length) {
-    c.innerHTML = '<span style="color:#C0BDB5;font-size:0.8125rem;">點擊圖卡來說話...</span>';
+    c.innerHTML = '<span class="s-placeholder">點擊下方圖卡加入句子…</span>';
     return;
   }
-  c.innerHTML = sentence.map((s, i) => `
-    <div class="chip" onclick="removeFromSentence(${i})" role="button" aria-label="移除 ${s.label}" title="點擊移除">
-      ${s.photo ? `<img class="chip-photo" src="${s.photo}" alt="">` :
-                  (s.emoji ? `<span>${s.emoji}</span>` : '')}
-      <span>${s.label}</span>
-    </div>`).join('');
+  c.innerHTML = sentence.map((s, i) => {
+    const visual = s.photo
+      ? `<img class="chip-photo" src="${s.photo}" alt="">`
+      : s.emoji ? `<span class="chip-emoji">${s.emoji}</span>` : '';
+    return `<div class="chip" onclick="removeFromSentence(${i})"
+                 role="button" aria-label="移除 ${s.label}" title="點擊移除">
+              ${visual}
+              <span class="chip-text">${s.label}</span>
+            </div>`;
+  }).join('');
 }
 
 /* ══════════════════════════════════════════════

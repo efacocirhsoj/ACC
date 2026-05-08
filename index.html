@@ -263,12 +263,16 @@ input[type=range] { width: 60px; accent-color: white; }
 .sentence-bar {
   background: var(--surface);
   border-bottom: 3px solid var(--blue);
-  padding: clamp(7px,1.5vw,10px) var(--pad);
+  padding: 10px var(--pad);
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 8px;
-  min-height: clamp(60px, 10vh, 80px);
+  min-height: 90px;
+  max-height: 160px;
   flex-wrap: wrap;
+  flex-shrink: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .s-label {
@@ -285,7 +289,8 @@ input[type=range] { width: 60px; accent-color: white; }
   flex-wrap: wrap;
   gap: 5px;
   flex: 1;
-  align-items: center;
+  align-items: flex-start;
+  align-content: flex-start;
   min-width: 80px;
 }
 
@@ -307,7 +312,7 @@ input[type=range] { width: 60px; accent-color: white; }
 .chip:hover { background: #D4E9FB; transform: scale(0.97); }
 .chip-photo { width: 22px; height: 22px; border-radius: 50%; object-fit: cover; }
 
-.s-actions { display: flex; gap: 6px; margin-left: auto; }
+.s-actions { display: flex; gap: 6px; margin-left: auto; flex-shrink: 0; align-self: flex-start; }
 
 .speak-btn {
   background: var(--green);
@@ -406,8 +411,12 @@ input[type=range] { width: 60px; accent-color: white; }
   border-bottom: 2px solid var(--border);
   display: flex;
   overflow-x: auto;
+  overflow-y: hidden;       /* 鎖定，不能上下滾動 */
+  touch-action: pan-x;     /* 只允許左右滑動手勢 */
   padding: 0 8px;
   scrollbar-width: none;
+  flex-shrink: 0;           /* 高度不被壓縮 */
+}
 }
 .cat-tabs::-webkit-scrollbar { display: none; }
 @media (min-width: 960px) { .cat-tabs { display: none; } }
@@ -1279,7 +1288,7 @@ body.unlocked .ctrl-btn-full.locked-ui { display: flex !important; }
 @media (min-width: 960px) {
   .cat-edit-bar { padding: 7px 16px; }
   .quick-area   { padding: 10px 16px; }
-  .sentence-bar { padding: 10px 16px; min-height: 80px; }
+  .sentence-bar { padding: 10px 16px; min-height: 90px; max-height: 180px; }
   .q-list { flex-wrap: wrap; overflow-x: visible; scroll-snap-type: unset; }
   .qbtn, .qbtn-del, .qbtn-add { width: auto; scroll-snap-align: unset; }
   .q-list > div { width: auto; scroll-snap-align: unset; }
@@ -1760,7 +1769,13 @@ function renderSidebarCats() {
   }).join('');
 }
 
-function selectCat(id) { currentCat = id; renderAll(); }
+function selectCat(id) {
+  currentCat = id;
+  renderAll();
+  // 切換分類後捲回第一頁
+  const grid = document.getElementById('symbolGrid');
+  if (grid) grid.scrollLeft = 0;
+}
 
 function cardVisualHTML(s) {
   if (s.photo)

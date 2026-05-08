@@ -1671,10 +1671,10 @@ let lastSavedAt = null;
 
 // 設定
 let settings = {
-  soundOnClick: true,
+  soundOnClick: false,
   fontSize: 'normal',
   bgColor: '#FFF9F2',
-  showQuickBar: true,
+  showQuickBar: false,
 };
 
 // 多使用者
@@ -1742,7 +1742,14 @@ function loadState() {
       profileName   = d.profileName  || '使用者';
       appTitle      = d.appTitle     || '🗣️ 我的溝通板';
       lastSavedAt   = d.savedAt      || null;
-      settings      = Object.assign({ soundOnClick:true, fontSize:'normal', bgColor:'#FFF9F2', showQuickBar:true }, d.settings || {});
+      // 合併設定，但 soundOnClick / showQuickBar 永遠使用目前預設值（false）
+      const stored  = d.settings || {};
+      settings = {
+        soundOnClick:  false,
+        showQuickBar:  false,
+        fontSize:      stored.fontSize  || 'normal',
+        bgColor:       stored.bgColor   || '#FFF9F2',
+      };
       users         = d.users        || [];
       currentUserId = d.currentUserId|| null;
       if (!cats.find(c => c.id === currentCat)) currentCat = cats[0]?.id || 'need';
@@ -2601,7 +2608,7 @@ function applyBackupData(d) {
   quickPhrases = d.quickPhrases;
   profileName  = d.profileName || profileName;
   appTitle     = d.appTitle    || appTitle;
-  if (d.settings) settings = Object.assign({ soundOnClick:true, fontSize:'normal', bgColor:'#FFF9F2', showQuickBar:true }, d.settings);
+  if (d.settings) settings = Object.assign({ soundOnClick:false, fontSize:'normal', bgColor:'#FFF9F2', showQuickBar:false }, d.settings);
   if (!cats.find(c => c.id === currentCat)) currentCat = cats[0]?.id || 'need';
   forceClose();
   saveState();
@@ -2841,7 +2848,7 @@ function doRestoreFromText() {
   appTitle     = d.appTitle    || appTitle;
 
   if (d.settings && typeof d.settings === 'object') {
-    settings = Object.assign({ soundOnClick: true, fontSize: 'normal', bgColor: '#FFF9F2', showQuickBar: true }, d.settings);
+    settings = Object.assign({ soundOnClick: false, fontSize: 'normal', bgColor: '#FFF9F2', showQuickBar: false }, d.settings);
   }
 
   if (!cats.find(function(c) { return c.id === currentCat; })) {
@@ -2925,7 +2932,7 @@ function handleFileImport(e) {
       appTitle     = d.appTitle     || appTitle;
       if (d.settings) {
         settings = Object.assign(
-          { soundOnClick: true, fontSize: 'normal', bgColor: '#FFF9F2', showQuickBar: true },
+          { soundOnClick: false, fontSize: 'normal', bgColor: '#FFF9F2', showQuickBar: false },
           d.settings
         );
       }
@@ -3226,7 +3233,7 @@ function loadUserData(userId) {
       symbols      = d.symbols      || cloneDefault('symbols');
       quickPhrases = d.quickPhrases || cloneDefault('quickPhrases');
       appTitle     = d.appTitle     || '🗣️ 我的溝通板';
-      settings     = Object.assign({ soundOnClick:true, fontSize:'normal', bgColor:'#FFF9F2', showQuickBar:true }, d.settings || {});
+      settings     = Object.assign({ soundOnClick:false, fontSize:'normal', bgColor:'#FFF9F2', showQuickBar:false }, d.settings || {});
       currentCat   = cats[0]?.id || 'need';
       applySettings();
       return;
@@ -3237,7 +3244,7 @@ function loadUserData(userId) {
   symbols      = cloneDefault('symbols');
   quickPhrases = cloneDefault('quickPhrases');
   appTitle     = '🗣️ 我的溝通板';
-  settings     = { soundOnClick:true, fontSize:'normal', bgColor:'#FFF9F2', showQuickBar:true };
+  settings     = { soundOnClick:false, fontSize:'normal', bgColor:'#FFF9F2', showQuickBar:false };
   currentCat   = 'need';
   applySettings();
 }
@@ -3316,7 +3323,7 @@ document.getElementById('fileInput').addEventListener('change', function() {
     appTitle     = d.appTitle    || appTitle;
 
     if (d.settings && typeof d.settings === 'object') {
-      settings = Object.assign({ soundOnClick: true, fontSize: 'normal', bgColor: '#FFF9F2', showQuickBar: true }, d.settings);
+      settings = Object.assign({ soundOnClick: false, fontSize: 'normal', bgColor: '#FFF9F2', showQuickBar: false }, d.settings);
     }
 
     if (!cats.find(function(c) { return c.id === currentCat; })) {

@@ -1506,7 +1506,6 @@ body.unlocked .ctrl-btn-full.locked-ui { display: flex !important; }
 <!-- 隱藏 file inputs（放在 body 最外層，不受 modal 生命週期影響） -->
 <input type="file" id="fileInput"   accept=".json"  style="display:none;">
 <input type="file" id="photoInput"  accept="image/*" style="display:none;">
-<input type="file" id="cameraInput" accept="image/*" capture="environment" style="display:none;">
 
 <script>
 /* ══════════════════════════════════════════════
@@ -1671,6 +1670,7 @@ let settings = {
   fontSize: 'normal',
   bgColor: '#FFF9F2',
   showQuickBar: false,
+  cardSize: 'normal',   // 'small' | 'normal' | 'large'
 };
 
 // 多使用者
@@ -1745,6 +1745,7 @@ function loadState() {
         showQuickBar:  false,
         fontSize:      stored.fontSize  || 'normal',
         bgColor:       stored.bgColor   || '#FFF9F2',
+        cardSize:      stored.cardSize  || 'normal',
       };
       users         = d.users        || [];
       currentUserId = d.currentUserId|| null;
@@ -2211,7 +2212,6 @@ function renderPhotoPanel() {
       </div>
       <div class="photo-row">
         <button class="cam-btn" onclick="document.getElementById('photoInput').click()">🖼 重新選圖</button>
-        <button class="cam-btn purple" onclick="document.getElementById('cameraInput').click()">📷 重新拍照</button>
       </div>`;
   } else {
     panel.innerHTML = `
@@ -2219,9 +2219,6 @@ function renderPhotoPanel() {
         <div class="puz-icon">🖼️</div>
         <div class="puz-text">點此選擇相片</div>
         <div class="puz-sub">支援 JPG、PNG、HEIC 等格式</div>
-      </div>
-      <div class="photo-row">
-        <button class="cam-btn purple" onclick="document.getElementById('cameraInput').click()">📷 直接拍照</button>
       </div>`;
   }
 }
@@ -2567,7 +2564,7 @@ function applyBackupData(d) {
   quickPhrases = d.quickPhrases;
   profileName  = d.profileName || profileName;
   appTitle     = d.appTitle    || appTitle;
-  if (d.settings) settings = Object.assign({ soundOnClick:false, fontSize:'normal', bgColor:'#FFF9F2', showQuickBar:false }, d.settings);
+  if (d.settings) settings = Object.assign({ soundOnClick:false, fontSize:'normal', bgColor:'#FFF9F2', showQuickBar:false, cardSize:'normal' }, d.settings);
   if (!cats.find(c => c.id === currentCat)) currentCat = cats[0]?.id || 'need';
   forceClose();
   saveState();
@@ -2807,7 +2804,7 @@ function doRestoreFromText() {
   appTitle     = d.appTitle    || appTitle;
 
   if (d.settings && typeof d.settings === 'object') {
-    settings = Object.assign({ soundOnClick: false, fontSize: 'normal', bgColor: '#FFF9F2', showQuickBar: false }, d.settings);
+    settings = Object.assign({ soundOnClick: false, fontSize: 'normal', bgColor: '#FFF9F2', showQuickBar: false, cardSize: 'normal' }, d.settings);
   }
 
   if (!cats.find(function(c) { return c.id === currentCat; })) {
@@ -2891,7 +2888,7 @@ function handleFileImport(e) {
       appTitle     = d.appTitle     || appTitle;
       if (d.settings) {
         settings = Object.assign(
-          { soundOnClick: false, fontSize: 'normal', bgColor: '#FFF9F2', showQuickBar: false },
+          { soundOnClick: false, fontSize: 'normal', bgColor: '#FFF9F2', showQuickBar: false, cardSize: 'normal' },
           d.settings
         );
       }
@@ -2994,6 +2991,38 @@ function openSettings() {
       </div>
     </div>
 
+    <!-- 圖卡大小 -->
+    <div class="settings-section">
+      <div class="settings-section-title">🃏 圖卡大小</div>
+      <div class="font-size-btns" style="flex-wrap:wrap;">
+        <button class="fs-btn ${s.cardSize==='small'?'active':''}" onclick="setCardSize('small',this)">
+          <div style="font-size:1.2rem;">🃏</div>
+          <div style="font-size:0.75rem;font-weight:700;margin-top:2px;">小</div>
+          <div style="font-size:0.6rem;color:var(--muted);">×0.75</div>
+        </button>
+        <button class="fs-btn ${(!s.cardSize||s.cardSize==='normal')?'active':''}" onclick="setCardSize('normal',this)">
+          <div style="font-size:1.6rem;">🃏</div>
+          <div style="font-size:0.75rem;font-weight:700;margin-top:2px;">標準</div>
+          <div style="font-size:0.6rem;color:var(--muted);">×1.0</div>
+        </button>
+        <button class="fs-btn ${s.cardSize==='large'?'active':''}" onclick="setCardSize('large',this)">
+          <div style="font-size:2.0rem;">🃏</div>
+          <div style="font-size:0.75rem;font-weight:700;margin-top:2px;">大</div>
+          <div style="font-size:0.6rem;color:var(--muted);">×1.4</div>
+        </button>
+        <button class="fs-btn ${s.cardSize==='xlarge'?'active':''}" onclick="setCardSize('xlarge',this)">
+          <div style="font-size:2.4rem;">🃏</div>
+          <div style="font-size:0.75rem;font-weight:700;margin-top:2px;">超大</div>
+          <div style="font-size:0.6rem;color:var(--muted);">×1.8</div>
+        </button>
+        <button class="fs-btn ${s.cardSize==='xxlarge'?'active':''}" onclick="setCardSize('xxlarge',this)">
+          <div style="font-size:2.8rem;">🃏</div>
+          <div style="font-size:0.75rem;font-weight:700;margin-top:2px;">巨大</div>
+          <div style="font-size:0.6rem;color:var(--muted);">×2.2</div>
+        </button>
+      </div>
+    </div>
+
     <!-- 背景 -->
     <div class="settings-section">
       <div class="settings-section-title">🎨 背景顏色</div>
@@ -3021,6 +3050,14 @@ function setFontSize(size, el) {
   applySettings();
 }
 
+function setCardSize(size, el) {
+  settings.cardSize = size;
+  document.querySelectorAll('.fs-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  applySettings();
+  renderSymbols(); // 重新渲染讓分頁點數更新
+}
+
 function setBgColor(color, el) {
   settings.bgColor = color;
   document.querySelectorAll('.bg-dot').forEach(d => d.classList.remove('active'));
@@ -3033,16 +3070,23 @@ function applySettings() {
   document.body.style.background = settings.bgColor;
   document.documentElement.style.setProperty('--bg', settings.bgColor);
 
-  // 全站縮放
-  const scale = settings.fontSize === 'xlarge' ? 1.5
-              : settings.fontSize === 'large'  ? 1.25
-              : 1;
-  document.documentElement.style.fontSize = (16 * scale) + 'px';
-  document.documentElement.style.setProperty('--card-min',    Math.round(90  * scale) + 'px');
-  document.documentElement.style.setProperty('--visual-size', Math.round(54  * scale) + 'px');
-  document.documentElement.style.setProperty('--emoji-size',  Math.round(36  * scale) + 'px');
-  document.documentElement.style.setProperty('--gap',         Math.round(8   * scale) + 'px');
-  document.documentElement.style.setProperty('--pad',         Math.round(10  * scale) + 'px');
+  // 全站字體縮放
+  const fontScale = settings.fontSize === 'xlarge' ? 1.5
+                  : settings.fontSize === 'large'  ? 1.25
+                  : 1;
+  document.documentElement.style.fontSize = (16 * fontScale) + 'px';
+
+  // 圖卡大小（獨立於字體縮放）
+  const cardScale = settings.cardSize === 'xxlarge' ? 2.2
+                  : settings.cardSize === 'xlarge'  ? 1.8
+                  : settings.cardSize === 'large'   ? 1.4
+                  : settings.cardSize === 'small'   ? 0.75
+                  : 1;
+  document.documentElement.style.setProperty('--card-min',    Math.round(90  * cardScale) + 'px');
+  document.documentElement.style.setProperty('--visual-size', Math.round(54  * cardScale) + 'px');
+  document.documentElement.style.setProperty('--emoji-size',  Math.round(36  * cardScale) + 'px');
+  document.documentElement.style.setProperty('--gap',  Math.round(8  * Math.max(fontScale, cardScale)) + 'px');
+  document.documentElement.style.setProperty('--pad',  Math.round(10 * Math.max(fontScale, cardScale)) + 'px');
 
   // 快速句子顯示/隱藏
   const qa = document.querySelector('.quick-area');
@@ -3192,7 +3236,7 @@ function loadUserData(userId) {
       symbols      = d.symbols      || cloneDefault('symbols');
       quickPhrases = d.quickPhrases || cloneDefault('quickPhrases');
       appTitle     = d.appTitle     || '🗣️ 我的溝通板';
-      settings     = Object.assign({ soundOnClick:false, fontSize:'normal', bgColor:'#FFF9F2', showQuickBar:false }, d.settings || {});
+      settings     = Object.assign({ soundOnClick:false, fontSize:'normal', bgColor:'#FFF9F2', showQuickBar:false, cardSize:'normal' }, d.settings || {});
       currentCat   = cats[0]?.id || 'need';
       applySettings();
       return;
@@ -3203,7 +3247,7 @@ function loadUserData(userId) {
   symbols      = cloneDefault('symbols');
   quickPhrases = cloneDefault('quickPhrases');
   appTitle     = '🗣️ 我的溝通板';
-  settings     = { soundOnClick:false, fontSize:'normal', bgColor:'#FFF9F2', showQuickBar:false };
+  settings     = { soundOnClick:false, fontSize:'normal', bgColor:'#FFF9F2', showQuickBar:false, cardSize:'normal' };
   currentCat   = 'need';
   applySettings();
 }
@@ -3282,7 +3326,7 @@ document.getElementById('fileInput').addEventListener('change', function() {
     appTitle     = d.appTitle    || appTitle;
 
     if (d.settings && typeof d.settings === 'object') {
-      settings = Object.assign({ soundOnClick: false, fontSize: 'normal', bgColor: '#FFF9F2', showQuickBar: false }, d.settings);
+      settings = Object.assign({ soundOnClick: false, fontSize: 'normal', bgColor: '#FFF9F2', showQuickBar: false, cardSize: 'normal' }, d.settings);
     }
 
     if (!cats.find(function(c) { return c.id === currentCat; })) {
@@ -3302,7 +3346,6 @@ document.getElementById('fileInput').addEventListener('change', function() {
 });
 
 document.getElementById('photoInput').addEventListener('change',  handlePhotoSelect);
-document.getElementById('cameraInput').addEventListener('change', handlePhotoSelect);
 
 // 手機方向鎖定為直式
 if (screen.orientation && screen.orientation.lock) {
